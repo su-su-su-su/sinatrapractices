@@ -1,0 +1,8 @@
+<button onclick="location.href='/memos/new'">追加</button>
+<div>
+  <ul>
+    <% @title.zip(@id).each do |title, id| %>
+      <li><a href="/memos/<%= id %>"><%= h(title) %></a></li>
+    <% end %>
+  </ul>
+</div>

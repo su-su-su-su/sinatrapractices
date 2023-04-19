@@ -1,0 +1,9 @@
+<% n = @id.index(params[:id]) %>
+<p><%= h(@title[n]) %></p>
+<p><%= h(@text[n]) %></p>
+
+<button onclick="location.href='/memos/<%= @id[n] %>/edit'">変更</button>
+<form action="/memos/<%= @id[n] %>" method="POST" style="display: inline-block;">
+  <input type="hidden" name="_method" value="DELETE">
+  <input type="submit" value="削除">
+</form>
