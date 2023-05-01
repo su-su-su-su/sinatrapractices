@@ -1,8 +1,12 @@
-<button onclick="location.href='/memos/new'">追加</button>
+<form action="/memos/new" method="get">
+  <button type="submit">追加</button>
+</form>
 <div>
   <ul>
-    <% @title.zip(@id).each do |title, id| %>
-      <li><a href="/memos/<%= id %>"><%= h(title) %></a></li>
-    <% end %>
+  <% @memos.each do |memo| %>
+    <li>
+      <a href="/memos/<%= memo["id"] %>"><%= h(memo["title"]) %></a>
+    </li>
+  <% end %>
   </ul>
 </div>

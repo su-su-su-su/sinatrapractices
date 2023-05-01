@@ -1,9 +1,14 @@
-<% n = @id.index(params[:id]) %>
-<p><%= h(@title[n]) %></p>
-<p><%= h(@text[n]) %></p>
+<p><%= h(@memo["title"]) %></p>
+<p><%= h(@memo["text"]) %></p>
 
-<button onclick="location.href='/memos/<%= @id[n] %>/edit'">変更</button>
-<form action="/memos/<%= @id[n] %>" method="POST" style="display: inline-block;">
-  <input type="hidden" name="_method" value="DELETE">
-  <input type="submit" value="削除">
-</form>
+<div class="form-container">
+  <form action="/memos/<%= @memo["id"] %>/edit" method="get">
+    <button type="submit">変更</button>
+  </form>
+  <form action="/memos/<%= @memo["id"] %>" method="POST">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" value="削除">
+  </form>
+</div>
+
+ <a href="/memos" class="back-link">トップページに戻る</a>

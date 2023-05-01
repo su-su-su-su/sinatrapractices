@@ -1,11 +1,12 @@
 <form action="/memos" method="POST">
   <div>
-    タイトル
-    <input type="text" name="title" required>
+    <label for="title">タイトル</label>
+    <input type="text" name="title" id="title" required autocomplete="off">
   </div>
   <div>
-    メモ
-    <textarea name="text" rows="4" required></textarea>
+  <label for="text">メモ</label>
+    <textarea name="text" id="text" rows="4" required></textarea>
   </div>
   <button type="submit">保存</button>
 </form>
+<a href="/memos" class="back-link">トップページに戻る</a>
