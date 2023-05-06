@@ -7,7 +7,17 @@ require 'json'
 require 'securerandom'
 
 def load_memos
-  File.open('memos.json') { |file| JSON.parse(file.read) }
+  json_data = File.open('memos.json') { |file| JSON.parse(file.read) }
+  json_data['memos']
+end
+
+def load_memo
+  memos = load_memos
+  @memo = memos.find { |memo| memo['id'] == params[:id] }
+end
+
+def save_memos(memos)
+  File.open('memos.json', 'w') { |file| JSON.dump({ 'memos' => memos }, file) }
 end
 
 helpers do
@@ -22,8 +32,7 @@ not_found do
 end
 
 get '/memos' do
-  hash = load_memos
-  @memos = hash['memos']
+  @memos = load_memos
   erb :memos
 end
 
@@ -35,42 +44,37 @@ post '/memos' do
   title = params[:title]
   text = params[:text]
   id = SecureRandom.uuid
-  hash = load_memos
-  hash['memos'] << { 'id' => id, 'title' => title, 'text' => text }
-  File.open('memos.json', 'w') { |file| JSON.dump(hash, file) }
-  redirect "/memos/#{id}"
+  new_memo = { 'id' => id, 'title' => title, 'text' => text }
+  memos = load_memos
+  memos << new_memo
+  save_memos(memos)
+  redirect "/memos/#{new_memo['id']}"
 end
 
 get '/memos/:id' do
-  hash = load_memos
-  memos = hash['memos']
-  @memo = memos.find { |m| m['id'] == params[:id] }
+  @memo = load_memo
   erb :show_memo
 end
 
 get '/memos/:id/edit' do
-  hash = load_memos
-  memos = hash['memos']
-  @memo = memos.find { |m| m['id'] == params[:id] }
+  @memo = load_memo
   erb :edit_memo
 end
 
 patch '/memos/:id' do
-  hash = load_memos
-  memos = hash['memos']
-  memo = memos.find { |m| m['id'] == params[:id] }
-  memo['title'] = params[:title]
-  memo['text'] = params[:text]
-  File.open('memos.json', 'w') { |file| JSON.dump(hash, file) }
+  memos = load_memos
+  target_memo = memos.find { |memo| memo['id'] == params[:id] }
+  target_memo['title'] = params[:title]
+  target_memo['text'] = params[:text]
+  save_memos(memos)
   redirect "/memos/#{params[:id]}"
 end
 
 delete '/memos/:id' do
-  hash = load_memos
-  memos = hash['memos']
+  memos = load_memos
   memos.delete_if do |memo|
     memo['id'] == params[:id]
   end
-  File.open('memos.json', 'w') { |file| JSON.dump(hash, file) }
+  save_memos(memos)
   redirect '/memos'
 end
