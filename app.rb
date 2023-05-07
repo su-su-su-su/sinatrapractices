@@ -11,9 +11,9 @@ def load_memos
   json_data['memos']
 end
 
-def load_memo
+def load_memo(id)
   memos = load_memos
-  @memo = memos.find { |memo| memo['id'] == params[:id] }
+  memos.find { |memo| memo['id'] == id }
 end
 
 def save_memos(memos)
@@ -45,36 +45,42 @@ post '/memos' do
   text = params[:text]
   id = SecureRandom.uuid
   new_memo = { 'id' => id, 'title' => title, 'text' => text }
+
   memos = load_memos
   memos << new_memo
   save_memos(memos)
+
   redirect "/memos/#{new_memo['id']}"
 end
 
 get '/memos/:id' do
-  @memo = load_memo
+  @memo = load_memo(params[:id])
   erb :show_memo
 end
 
 get '/memos/:id/edit' do
-  @memo = load_memo
+  @memo = load_memo(params[:id])
   erb :edit_memo
 end
 
 patch '/memos/:id' do
   memos = load_memos
   target_memo = memos.find { |memo| memo['id'] == params[:id] }
+
   target_memo['title'] = params[:title]
   target_memo['text'] = params[:text]
   save_memos(memos)
+
   redirect "/memos/#{params[:id]}"
 end
 
 delete '/memos/:id' do
   memos = load_memos
+
   memos.delete_if do |memo|
     memo['id'] == params[:id]
   end
   save_memos(memos)
+
   redirect '/memos'
 end
