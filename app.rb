@@ -7,8 +7,12 @@ require 'json'
 require 'securerandom'
 
 def load_memos
-  json_data = File.open('memos.json') { |file| JSON.parse(file.read) }
-  json_data['memos']
+  if File.exist?('memos.json')
+    json_data = File.open('memos.json') { |file| JSON.parse(file.read) }
+    json_data['memos']
+  else
+    []
+  end
 end
 
 def load_memo(id)
