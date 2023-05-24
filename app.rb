@@ -3,25 +3,20 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'erb'
-require 'json'
+require 'pg'
 require 'securerandom'
 
+def conn
+  PG.connect(dbname: 'memo_db')
+end
+
 def load_memos
-  if File.exist?('memos.json')
-    json_data = File.open('memos.json') { |file| JSON.parse(file.read) }
-    json_data['memos']
-  else
-    []
-  end
+  conn.exec('select * from memos order by id asc')
 end
 
 def load_memo(id)
-  memos = load_memos
-  memos.find { |memo| memo['id'] == id }
-end
-
-def save_memos(memos)
-  File.open('memos.json', 'w') { |file| JSON.dump({ 'memos' => memos }, file) }
+  memos = conn.exec_params('select * from memos where id = $1', [id])
+  memos[0]
 end
 
 helpers do
@@ -45,16 +40,9 @@ get '/memos/new' do
 end
 
 post '/memos' do
-  title = params[:title]
-  text = params[:text]
   id = SecureRandom.uuid
-  new_memo = { 'id' => id, 'title' => title, 'text' => text }
-
-  memos = load_memos
-  memos << new_memo
-  save_memos(memos)
-
-  redirect "/memos/#{new_memo['id']}"
+  conn.exec_params('INSERT INTO memos VALUES ($1, $2, $3)', [id, params[:title], params[:content]])
+  redirect "/memos/#{id}"
 end
 
 get '/memos/:id' do
@@ -68,23 +56,12 @@ get '/memos/:id/edit' do
 end
 
 patch '/memos/:id' do
-  memos = load_memos
-  target_memo = memos.find { |memo| memo['id'] == params[:id] }
-
-  target_memo['title'] = params[:title]
-  target_memo['text'] = params[:text]
-  save_memos(memos)
-
+  conn.exec_params('UPDATE memos SET title = $1, content = $2 WHERE id = $3',
+                   [params[:title], params[:content], params[:id]])
   redirect "/memos/#{params[:id]}"
 end
 
 delete '/memos/:id' do
-  memos = load_memos
-
-  memos.delete_if do |memo|
-    memo['id'] == params[:id]
-  end
-  save_memos(memos)
-
+  @memos = conn.exec_params('delete from  memos where id = $1', [params[:id]])
   redirect '/memos'
 end
