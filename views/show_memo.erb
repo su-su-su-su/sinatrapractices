@@ -1,0 +1,14 @@
+<p><%= h(@memo["title"]) %></p>
+<p><%= h(@memo["text"]) %></p>
+
+<div class="form-container">
+  <form action="/memos/<%= @memo["id"] %>/edit" method="GET">
+    <button type="submit">変更</button>
+  </form>
+  <form action="/memos/<%= @memo["id"] %>" method="POST">
+    <input type="hidden" name="_method" value="DELETE">
+    <button type="submit">削除</button>
+  </form>
+</div>
+
+<a href="/memos" class="back-link">トップページに戻る</a>

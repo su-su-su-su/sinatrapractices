@@ -1,0 +1,13 @@
+<form action="/memos/<%= @memo["id"] %>" method="POST">
+  <input type="hidden" name="_method" value="PATCH">
+  <div>
+    <label for="title">タイトル</label>
+    <input type="text" name="title" id="title" value="<%= @memo["title"] %>" autocomplete="off">
+  </div>
+  <div>
+    <label for="text">メモ</label>
+    <textarea name="text" id="text" rows="5"><%= h(@memo["text"]) %></textarea>
+  </div>
+  <button type="submit">保存</button>
+</form>
+<a href="/memos" class="back-link">トップページに戻る</a>
