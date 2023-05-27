@@ -11,11 +11,11 @@ def conn
 end
 
 def load_memos
-  conn.exec('select * from memos order by id asc')
+  conn.exec('SELECT * from memos order by id asc')
 end
 
 def load_memo(id)
-  memos = conn.exec_params('select * from memos where id = $1', [id])
+  memos = conn.exec_params('SELECT * from memos where id = $1', [id])
   memos[0]
 end
 
@@ -62,6 +62,6 @@ patch '/memos/:id' do
 end
 
 delete '/memos/:id' do
-  @memos = conn.exec_params('delete from  memos where id = $1', [params[:id]])
+  @memos = conn.exec_params('DELETE from memos where id = $1', [params[:id]])
   redirect '/memos'
 end
