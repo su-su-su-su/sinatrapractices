@@ -46,6 +46,7 @@ GEM
     parallel (1.23.0)
     parser (3.2.2.1)
       ast (~> 2.4.1)
+    pg (1.5.3)
     racc (1.6.2)
     rack (2.2.4)
     rack-protection (3.0.4)
@@ -95,6 +96,7 @@ PLATFORMS
 
 DEPENDENCIES
   erb_lint
+  pg
   sinatra
   sinatra-contrib
   webrick
